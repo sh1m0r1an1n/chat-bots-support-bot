@@ -6,6 +6,7 @@ import traceback
 from dotenv import load_dotenv
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 from telegram import Bot, TelegramError
+from google.cloud import dialogflow_v2 as dialogflow
 
 
 class TelegramLogHandler(logging.Handler):
@@ -20,6 +21,27 @@ class TelegramLogHandler(logging.Handler):
         """Отправка сообщения с логом"""
         log_entry = self.format(record)
         self.bot.send_message(chat_id=self.chat_id, text=log_entry)
+
+
+class DialogflowConnector:
+    """Класс для работы с Dialogflow API"""
+    def __init__(self, project_id):
+        self.project_id = project_id
+        self.session_client = dialogflow.SessionsClient()
+
+    def get_response(self, session_id, text, language_code='ru'):
+        """Получает ответ от Dialogflow"""
+        try:
+            session = self.session_client.session_path(self.project_id, session_id)
+            text_input = dialogflow.TextInput(text=text, language_code=language_code)
+            query_input = dialogflow.QueryInput(text=text_input)
+            response = self.session_client.detect_intent(
+                request={"session": session, "query_input": query_input}
+            )
+            return response.query_result.fulfillment_text
+        except Exception as e:
+            logging.error(f"Dialogflow error: {e}")
+            return
 
 
 def setup_logging(bot_token, chat_id):
@@ -40,7 +62,7 @@ def setup_logging(bot_token, chat_id):
 def start(update, context):
     """Обработчик команды /start"""
     try:
-        update.message.reply_text("Здравствуйте!")
+        update.message.reply_text("Здравствуйте! Я ваш помощник. Задайте ваш вопрос.")
         logging.info(f"Пользователь {update.message.chat.id} запустил бота")
     except Exception as e:
         logging.error(f"Ошибка в start-функции: {e}")
@@ -56,6 +78,27 @@ def echo(update, context):
         logging.error(f"Ошибка в эхо-функции: {e}")
 
 
+def handle_message(update, context):
+    """Обработчик текстовых сообщений с интеграцией Dialogflow"""
+    try:
+        user_id = str(update.message.chat.id)
+        user_text = update.message.text
+
+        dialogflow_connector = context.bot_data.get('dialogflow')
+        if not dialogflow_connector:
+            project_id = os.getenv('DIALOGFLOW_PROJECT_ID')
+            dialogflow_connector = DialogflowConnector(project_id)
+            context.bot_data['dialogflow'] = dialogflow_connector
+
+        response = dialogflow_connector.get_response(user_id, user_text)
+        update.message.reply_text(response)
+
+        logging.info(f"Обработано сообщение от {user_id}: {user_text}")
+    except Exception as e:
+        logging.error(f"Ошибка обработки сообщения: {e}")
+        update.message.reply_text("Произошла ошибка при обработке вашего запроса")
+
+
 def main():
     """Основная функция запуска бота."""
     load_dotenv()
@@ -63,6 +106,7 @@ def main():
     try:
         bot_token = os.environ["TELEGRAM_BOT_TOKEN"]
         chat_id = os.environ["TELEGRAM_CHAT_ID"]
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("DIALOGFLOW_CREDENTIALS_PATH")
     except KeyError as e:
         logging.exception(f"Отсутствует переменная окружения: {e}")
         raise
@@ -74,9 +118,9 @@ def main():
         dispatcher = updater.dispatcher
 
         dispatcher.add_handler(CommandHandler("start", start))
-        dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+        dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
-        logging.info("Эхобот запущен и готов к работе")
+        logging.info("Бот с интеграцией Dialogflow запущен и готов к работе")
         updater.start_polling()
         updater.idle()
     except Exception as e:
