@@ -106,7 +106,6 @@ def main():
     try:
         bot_token = os.environ["TELEGRAM_BOT_TOKEN"]
         chat_id = os.environ["TELEGRAM_CHAT_ID"]
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("DIALOGFLOW_CREDENTIALS_PATH")
     except KeyError as e:
         logging.exception(f"Отсутствует переменная окружения: {e}")
         raise
