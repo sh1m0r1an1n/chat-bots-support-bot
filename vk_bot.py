@@ -84,10 +84,10 @@ def main():
     """Основной цикл работы бота"""
     load_dotenv()
 
-    tg_bot_token = os.environ["TG_BOT_TOKEN"]
-    tg_chat_id = os.environ["TG_CHAT_ID"]
-    dialogflow_project_id = os.environ["DIALOGFLOW_PROJECT_ID"]
-    vk_group_token = os.environ["VK_GROUP_TOKEN"]
+    tg_bot_token = os.getenv("TG_BOT_TOKEN")
+    tg_chat_id = os.getenv("TG_CHAT_ID")
+    dialogflow_project_id = os.getenv("DIALOGFLOW_PROJECT_ID")
+    vk_group_token = os.getenv("VK_GROUP_TOKEN")
 
     try:
         setup_logging(tg_bot_token, tg_chat_id)

@@ -94,7 +94,7 @@ def main():
         setup_logging(bot_token, chat_id)
 
         updater = Updater(token=bot_token)
-        updater.dispatcher.bot_data['dialogflow_project_id'] = os.environ["DIALOGFLOW_PROJECT_ID"]
+        updater.dispatcher.bot_data['dialogflow_project_id'] = os.getenv("DIALOGFLOW_PROJECT_ID")
         dispatcher = updater.dispatcher
 
         dispatcher.add_handler(CommandHandler("start", start))
