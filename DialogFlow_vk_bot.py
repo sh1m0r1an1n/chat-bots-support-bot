@@ -21,10 +21,14 @@ class DialogflowConnector:
             response = self.session_client.detect_intent(
                 request={"session": session, "query_input": query_input}
             )
+
+            if response.query_result.intent.is_fallback:
+                return None
+
             return response.query_result.fulfillment_text
         except Exception as e:
             logging.error(f"Dialogflow error: {e}")
-            return "Извините, произошла ошибка при обработке вашего запроса"
+            return None
 
 
 def send_message(vk, user_id, message):
@@ -59,7 +63,8 @@ def main():
 
             response = dialogflow_connector.get_response(str(event.user_id), event.text)
 
-            send_message(vk, event.user_id, response or "Не удалось обработать запрос")
+            if response:
+                send_message(vk, event.user_id, response)
 
 
 if __name__ == "__main__":
