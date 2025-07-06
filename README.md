@@ -1,6 +1,8 @@
 # Чат-бот поддержки для "Игры глаголов" 📚
 
-Рабочие версии ботов: Telegram (@Verb_Game_Assistant_Bot), [ВКонтакте](https://vk.com/club231412959)
+Рабочие версии ботов:
+- [Telegram Bot](https://t.me/Verb_Game_Assistant_Bot)
+- [VK Bot](https://vk.com/club231412959)
 
 ## Функционал
 
@@ -74,8 +76,8 @@ python vk_bot.py
 ```
 
 ## Пример работы
-[Пример результата для Telegram:](media/demo_tg_bot.gif)
-[Пример результата для ВКонтакте:](media/demo_vk_bot.gif)
+![Telegram Bot Demo](media/demo_tg_bot.gif)
+![VK Bot Demo](media/demo_vk_bot.gif)
 
 ## Запуск на сервере
 
