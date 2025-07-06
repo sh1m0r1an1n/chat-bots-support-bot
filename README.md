@@ -76,7 +76,11 @@ python vk_bot.py
 ```
 
 ## Пример работы
+
+### Telegram Bot
 ![Telegram Bot Demo](media/demo_tg_bot.gif)
+
+### VK Bot
 ![VK Bot Demo](media/demo_vk_bot.gif)
 
 ## Запуск на сервере
