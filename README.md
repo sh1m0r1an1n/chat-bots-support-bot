@@ -131,7 +131,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ``` 
 
-4. Настройка systemd
+5. Настройка systemd
 - Создайте сервисный файл:
 ```bash
 nano /etc/systemd/system/devman-bot.service
