@@ -1,5 +1,6 @@
 import logging
 import os
+import requests.exceptions
 import time
 import traceback
 
@@ -27,6 +28,7 @@ def send_message(vk, user_id, message):
 def main():
     """Основной цикл работы бота"""
     load_dotenv()
+    os.environ["BOT_LOG_PREFIX"] = "[DIALOGFLOW][VK БОТ]"
 
     tg_bot_token = os.getenv("TG_BOT_TOKEN")
     tg_chat_id = os.getenv("TG_CHAT_ID")
@@ -60,8 +62,11 @@ def main():
     except KeyError as e:
         logging.critical(f"[VK БОТ] Отсутствует переменная окружения: {e}")
         raise
+    except requests.exceptions.ReadTimeout as e:
+        logging.warning(f"[VK БОТ][DIALOGFLOW] Таймаут соединения: {e}")
+        raise
     except Exception as e:
-        logging.critical(f"[VK БОТ] Ошибка в работе бота: {e}")
+        logging.critical(f"[VK БОТ][DIALOGFLOW] Ошибка в работе бота: {e}")
         raise
 
 

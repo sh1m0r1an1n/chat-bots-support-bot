@@ -16,6 +16,18 @@ def start(update, _):
     logging.info(f"[TG БОТ] Пользователь {update.message.chat.id} запустил бота")
 
 
+def help_command(update, _):
+    """Обработчик команды /help"""
+    help_text = """
+🤖 Доступные команды:
+/start - Начать работу с ботом
+/help - Показать эту справку
+\n💬 Просто напишите ваш вопрос, и я постараюсь помочь!
+    """
+    update.message.reply_text(help_text)
+    logging.info(f"[TG БОТ] Пользователь {update.message.chat.id} запросил помощь")
+
+
 def handle_message(update, context):
     """Обработчик текстовых сообщений с интеграцией Dialogflow"""
     user_id = str(update.message.chat.id)
@@ -38,6 +50,7 @@ def handle_message(update, context):
 def main():
     """Основная функция запуска бота."""
     load_dotenv()
+    os.environ["BOT_LOG_PREFIX"] = "[DIALOGFLOW][TG БОТ]"
 
     try:
         bot_token = os.environ["TG_BOT_TOKEN"]
@@ -50,6 +63,7 @@ def main():
         dispatcher = updater.dispatcher
 
         dispatcher.add_handler(CommandHandler("start", start))
+        dispatcher.add_handler(CommandHandler("help", help_command))
         dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
         logging.info("[TG БОТ] Бот с интеграцией Dialogflow запущен и готов к работе")
