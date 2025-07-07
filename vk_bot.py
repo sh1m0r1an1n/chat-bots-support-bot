@@ -43,7 +43,8 @@ def main():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             logging.info(f"[VK БОТ] Новое сообщение от {event.user_id}: {event.text}")
             
-            response = detect_intent_text(dialogflow_project_id, str(event.user_id), event.text)
+            session_id = f"vk-{event.user_id}"
+            response = detect_intent_text(dialogflow_project_id, session_id, event.text)
             if response:
                 send_message(vk, event.user_id, response)
 
