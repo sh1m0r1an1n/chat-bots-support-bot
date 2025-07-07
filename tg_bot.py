@@ -33,13 +33,10 @@ def handle_message(update, context):
     user_id = str(update.message.chat.id)
     user_text = update.message.text
     project_id = context.bot_data['dialogflow_project_id']
-    try:
-        response = detect_intent_text(project_id, user_id, user_text)
-        update.message.reply_text(response)
-        logging.info(f"[TG БОТ] Обработано сообщение от {user_id}: {user_text}")
-    except Exception as e:
-        logging.error(f"[TG БОТ] Ошибка обработки сообщения: {e}")
-        update.message.reply_text("Произошла ошибка при обработке вашего запроса")
+
+    response = detect_intent_text(project_id, user_id, user_text)
+    update.message.reply_text(response)
+    logging.info(f"[TG БОТ] Обработано сообщение от {user_id}: {user_text}")
 
 
 def main():
@@ -47,27 +44,22 @@ def main():
     load_dotenv()
     os.environ["BOT_LOG_PREFIX"] = "[DIALOGFLOW][TG БОТ]"
 
-    try:
-        bot_token = os.environ["TG_BOT_TOKEN"]
-        chat_id = os.environ["TG_CHAT_ID"]
+    bot_token = os.environ["TG_BOT_TOKEN"]
+    chat_id = os.environ["TG_CHAT_ID"]
 
-        setup_logging(bot_token, chat_id)
+    setup_logging(bot_token, chat_id)
 
-        updater = Updater(token=bot_token)
-        updater.dispatcher.bot_data['dialogflow_project_id'] = os.environ["DIALOGFLOW_PROJECT_ID"]
-        dispatcher = updater.dispatcher
+    updater = Updater(token=bot_token)
+    updater.dispatcher.bot_data['dialogflow_project_id'] = os.environ["DIALOGFLOW_PROJECT_ID"]
+    dispatcher = updater.dispatcher
 
-        dispatcher.add_handler(CommandHandler("start", start))
-        dispatcher.add_handler(CommandHandler("help", help_command))
-        dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("help", help_command))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
-        logging.info("[TG БОТ] Бот с интеграцией Dialogflow запущен и готов к работе")
-        updater.start_polling()
-        updater.idle()
-    
-    except Exception as e:
-        logging.critical(f"[TG БОТ] Ошибка при запуске бота: {e}")
-        raise
+    logging.info("[TG БОТ] Бот с интеграцией Dialogflow запущен и готов к работе")
+    updater.start_polling()
+    updater.idle()
 
 
 if __name__ == "__main__":

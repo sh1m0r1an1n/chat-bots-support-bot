@@ -13,10 +13,7 @@ class TelegramLogHandler(logging.Handler):
     def emit(self, record):
         """Отправка сообщения с логом"""
         log_entry = self.format(record)
-        try:
-            self.bot.send_message(chat_id=self.chat_id, text=log_entry)
-        except Exception as e:
-            logging.error(f"Ошибка отправки лога в Telegram: {e}")
+        self.bot.send_message(chat_id=self.chat_id, text=log_entry)
 
 
 def setup_logging(bot_token, chat_id):
