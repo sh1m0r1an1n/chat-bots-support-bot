@@ -31,7 +31,6 @@ def main():
     vk_group_token = os.environ["VK_GROUP_TOKEN"]
 
     setup_logging(tg_bot_token, tg_chat_id)
-    logging.info("[VK БОТ] Инициализация бота")
 
     vk_session = vk_api.VkApi(token=vk_group_token)
     longpoll = VkLongPoll(vk_session)
