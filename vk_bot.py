@@ -30,10 +30,10 @@ def main():
     load_dotenv()
     os.environ["BOT_LOG_PREFIX"] = "[DIALOGFLOW][VK БОТ]"
 
-    tg_bot_token = os.getenv("TG_BOT_TOKEN")
-    tg_chat_id = os.getenv("TG_CHAT_ID")
-    dialogflow_project_id = os.getenv("DIALOGFLOW_PROJECT_ID")
-    vk_group_token = os.getenv("VK_GROUP_TOKEN")
+    tg_bot_token = os.environ["TG_BOT_TOKEN"]
+    tg_chat_id = os.environ["TG_CHAT_ID"]
+    dialogflow_project_id = os.environ["DIALOGFLOW_PROJECT_ID"]
+    vk_group_token = os.environ["VK_GROUP_TOKEN"]
 
     try:
         setup_logging(tg_bot_token, tg_chat_id)
@@ -52,11 +52,7 @@ def main():
                 response = detect_intent_text(dialogflow_project_id, str(event.user_id), event.text)
                 if response:
                     send_message(vk, event.user_id, response)
-
-
-    except KeyError as e:
-        logging.critical(f"[VK БОТ] Отсутствует переменная окружения: {e}")
-        raise
+    
     except requests.exceptions.ReadTimeout as e:
         logging.warning(f"[VK БОТ][DIALOGFLOW] Таймаут соединения: {e}")
         raise

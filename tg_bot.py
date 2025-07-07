@@ -54,7 +54,7 @@ def main():
         setup_logging(bot_token, chat_id)
 
         updater = Updater(token=bot_token)
-        updater.dispatcher.bot_data['dialogflow_project_id'] = os.getenv("DIALOGFLOW_PROJECT_ID")
+        updater.dispatcher.bot_data['dialogflow_project_id'] = os.environ["DIALOGFLOW_PROJECT_ID"]
         dispatcher = updater.dispatcher
 
         dispatcher.add_handler(CommandHandler("start", start))
@@ -64,10 +64,7 @@ def main():
         logging.info("[TG БОТ] Бот с интеграцией Dialogflow запущен и готов к работе")
         updater.start_polling()
         updater.idle()
-
-    except KeyError as e:
-        logging.critical(f"[TG БОТ] Отсутствует переменная окружения: {e}")
-        raise
+    
     except Exception as e:
         logging.critical(f"[TG БОТ] Ошибка при запуске бота: {e}")
         raise

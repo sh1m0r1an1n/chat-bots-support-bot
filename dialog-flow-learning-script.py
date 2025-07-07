@@ -10,9 +10,9 @@ def main():
     """Создает интенты в Dialogflow из JSON файла с вопросами и ответами."""
     load_dotenv()
 
-    project_id = os.getenv('DIALOGFLOW_PROJECT_ID')
-    credentials_path = os.getenv('DIALOGFLOW_CREDENTIALS_PATH')
-    questions_file = os.getenv('QUESTIONS_JSON_FILE', 'questions.json')
+    project_id = os.environ['DIALOGFLOW_PROJECT_ID']
+    credentials_path = os.environ['DIALOGFLOW_CREDENTIALS_PATH']
+    questions_file = os.environ['QUESTIONS_JSON_FILE', 'questions.json']
 
     credentials = service_account.Credentials.from_service_account_file(credentials_path)
     intents_client = dialogflow.IntentsClient(credentials=credentials)
