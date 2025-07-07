@@ -35,7 +35,8 @@ def handle_message(update, context):
 
     session_id = f"tg-{user_id}"
     response = detect_intent_text(project_id, session_id, user_text)
-    update.message.reply_text(response)
+    if response:
+        update.message.reply_text(response)
     logging.info(f"[TG БОТ] Обработано сообщение от {user_id}: {user_text}")
 
 
