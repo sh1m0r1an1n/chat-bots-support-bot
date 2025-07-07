@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 
-from dialogflow_utils import DialogflowConnector
+from dialogflow_utils import detect_intent_text
 from logging_utils import setup_logging
 
 
@@ -26,7 +26,7 @@ def send_message(vk, user_id, message):
 
 
 def main():
-    """Основной цикл работы бота"""
+    """Основной цикл работы VK бота."""
     load_dotenv()
     os.environ["BOT_LOG_PREFIX"] = "[DIALOGFLOW][VK БОТ]"
 
@@ -39,8 +39,6 @@ def main():
         setup_logging(tg_bot_token, tg_chat_id)
         logging.info("[VK БОТ] Инициализация бота")
 
-        dialogflow_connector = DialogflowConnector(dialogflow_project_id)
-
         vk_session = vk_api.VkApi(token=vk_group_token)
         longpoll = VkLongPoll(vk_session)
         vk = vk_session.get_api()
@@ -50,14 +48,11 @@ def main():
         for event in longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 logging.info(f"[VK БОТ] Новое сообщение от {event.user_id}: {event.text}")
-
-                response = dialogflow_connector.get_response(
-                    str(event.user_id),
-                    event.text
-                )
-
+                
+                response = detect_intent_text(dialogflow_project_id, str(event.user_id), event.text)
                 if response:
                     send_message(vk, event.user_id, response)
+
 
     except KeyError as e:
         logging.critical(f"[VK БОТ] Отсутствует переменная окружения: {e}")

@@ -6,7 +6,7 @@ import traceback
 from dotenv import load_dotenv
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
-from dialogflow_utils import DialogflowConnector
+from dialogflow_utils import detect_intent_text
 from logging_utils import setup_logging
 
 
@@ -32,14 +32,9 @@ def handle_message(update, context):
     """Обработчик текстовых сообщений с интеграцией Dialogflow"""
     user_id = str(update.message.chat.id)
     user_text = update.message.text
-
-    if 'dialogflow' not in context.bot_data:
-        context.bot_data['dialogflow'] = DialogflowConnector(
-            context.bot_data['dialogflow_project_id']
-        )
-
+    project_id = context.bot_data['dialogflow_project_id']
     try:
-        response = context.bot_data['dialogflow'].get_response(user_id, user_text)
+        response = detect_intent_text(project_id, user_id, user_text)
         update.message.reply_text(response)
         logging.info(f"[TG БОТ] Обработано сообщение от {user_id}: {user_text}")
     except Exception as e:
