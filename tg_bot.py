@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-import traceback
 
 from dotenv import load_dotenv
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
@@ -67,5 +66,5 @@ if __name__ == "__main__":
         try:
             main()
         except Exception as e:
-            logging.critical(f"[TG БОТ] Критическая ошибка: {e}\n{traceback.format_exc()}")
+            logging.exception(f"[TG БОТ] Критическая ошибка: {e}")
             time.sleep(5)

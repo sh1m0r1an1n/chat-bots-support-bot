@@ -1,8 +1,6 @@
 import logging
 import os
-import requests.exceptions
 import time
-import traceback
 
 from dotenv import load_dotenv
 import vk_api
@@ -55,5 +53,5 @@ if __name__ == "__main__":
         try:
             main()
         except Exception as e:
-            logging.critical(f"[VK БОТ] Критическая ошибка: {e}\n{traceback.format_exc()}")
+            logging.exception(f"[VK БОТ] Критическая ошибка: {e}")
             time.sleep(5)
